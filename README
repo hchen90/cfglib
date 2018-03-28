@@ -1,0 +1,41 @@
+COPYING:
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+#########################################################################
+
+DESCRIPTION:
+
+ cfglib is a library of two common library,usualy using in configure or 
+ settings of software.
+ The first one is 'section',the form is like this:
+  [header1]
+  tag1=value1
+  tag2=value2
+  [header2]
+  tag1=value1
+  tag2=value5
+ The second one is 'xml',this is an well-known text formatting,you may 
+ know this already.
+  <tag1>something<tag2>
+ ***This library is tiny tool for parsing 'section' or 'xml' -file,it'll 
+ ***not support some complex operations.
+
+#########################################################################
+
+AUTHOR:
+
+ Sean Chen <a.chenxiang.z@gmail.com>
+

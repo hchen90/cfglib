@@ -1,0 +1,8 @@
+*~
+*.[ao]
+*.swp
+*.cache/
+*.libs/
+*.deps/
+xml_test*
+section_test*

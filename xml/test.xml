@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<element>
+  <test name="hello" id="2">this is a test</test>
+  <!--this is comment-->
+  <items>
+    <dir test="123456789" path="/home/someone/xml">this is a test2</dir>
+    <!--
+	  this is comment.
+    -->
+    <singleline str="this is a singleline test"/>
+	<abcdefg abc="abc" defg="12345">
+		abcdefghijklmnopqrstuvwxyz 0123
+		456789
+	</abcdefg>
+	<num a="1" abc="12345" id="unknown"/>
+	this is a test3.
+	<!--this is last one-->
+	<lastone id="1234">
+		this is the last one.
+	</lastone>
+  </items>
+  <section name="section" id="0123">this is the last section</section>
+</element>

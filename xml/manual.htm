@@ -1,0 +1,597 @@
+<!doctype html>
+<html>
+<head>
+<title>CfgLib-Xml Manual</title>
+<meta charset="gb2312">
+<style type="text/css">
+.titlestyle {
+	font-size: 18px;
+	font-style: normal;
+	line-height: normal;
+	font-weight: bold;
+	font-variant: normal;
+}
+.pistyle {
+  font-size: 14px;
+}
+.codestyle {
+  font-size: 14px;
+  background: #e0e0e0;
+  background-color: #e0e0e0;
+  margin: 4px 0px 4px 0px;
+  color: #000000;
+  border: 1px solid #606060;
+}
+.lnkstyle {
+  color: #c0c0c0;
+  font-size: 12px;
+}
+</style>
+</head>
+<body>
+<header role="banner" >
+  <hgroup>
+    <h1>CfgLib-Xml Manual</h1>
+    <h2>CfgLib-Xml is an library for processing XML Document.</h2>
+  </hgroup>
+</header>
+<p align="right">
+  <a href="#lang_english" class="lnkstyle">english</a><br>
+  <a href="#lang_chinese" class="lnkstyle">中文</a>
+</p>
+<section>
+  <article>
+    This program is free software: you can redistribute it and/or modify<br>
+    it under the terms of the GNU General Public License as published by<br>
+    the Free Software Foundation, either version 3 of the License, or<br>
+    (at your option) any later version.<br><br>
+    This program is distributed in the hope that it will be useful,<br>
+    but WITHOUT ANY WARRANTY; without even the implied warranty of<br>
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br>
+    GNU General Public License for more details.<br><br>
+    You should have received a copy of the GNU General Public License<br>
+    along with this program.  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.
+  </article>
+</section>
+<hr>
+<p align="right" class="lnkstyle">english</a>
+<a name="lang_english"></a>
+<nav role="navigation" >
+  <ul>
+    <li><p align="left"><font size="3">APIs Reference</font></p></li>
+    <li><a href="#api_init_doc">void* xml_init_document(const char* filename)</a></li>
+    <li><a href="#api_free_doc">int xml_free_document(void* handle)</a></li>
+    <li><a href="#api_get_text">int xml_get_element_text(void* handle,const char* path,const char* buf,int cb,int mode)</a></li>
+    <li><a href="#api_set_text">int xml_set_element_text(void* handle,const char* path,const char* buf,int mode)</a></li>
+    <li><a href="#api_get_attr">int xml_get_element_attributes(void* handle,const char* path,const char* name,const char* buf,int cb,int mode)</a></li>
+    <li><a href="#api_set_attr">int xml_set_element_attributes(void* handle,const char* path,const char* name,const char* buf,int mode)</a></li>
+    <li><a href="#api_up_doc">int xml_update_document(void* handle)</a></li>
+    <li><a href="#api_wr_doc">int xml_write_document(void* handle,const char* filename)</a></li>
+    <li><a href="#api_node_open">void* xml_node_branch_open(void* handle,const char* path)</a></li>
+    <li><a href="#api_node_next">void* xml_node_branch_go_next(void* treenode)</a></li>
+    <li><a href="#api_node_previous">void* xml_node_branch_go_previous(void* treenode)</a></li>
+    <li><a href="#api_node_child">void* xml_node_branch_go_child(void* treenode)</a></li>
+    <li><a href="#api_node_insert">void* xml_node_branch_insert(void* treenode,const char* tag,const char* attributes,int single,const char* text,const char* comment)</a></li>
+    <li><a href="#api_node_insertc">void* xml_node_branch_insert_child(void* treenode,const char* tag,const char* attributes,int single,const char* text,const char* comment)</a></li>
+    <li><a href="#api_node_remove">int xml_node_branch_remove(void* treenode)</a></li>
+  </ul>
+</nav>
+<hr>
+<section>
+  <article>
+  	<div>
+  	  <a name="api_init_doc"></a>
+  	  <h2 class="titlestyle">void* xml_init_document(const char* filename)</h2>
+  	  <p class="pistyle">
+  	    this function must been called before other functions.we use this function to initialize some internal data struct,such as tree,stack.<br>
+  	    if initialized successful, it'll return a handle.otherwise return 0.
+  	    <pre class="codestyle">
+  	      void* handle=xml_init_document();
+  	      if(handle){
+  	        // ...
+  	      }
+  	    </pre>
+  	  </p>
+  	</div>
+  	<div>
+  	  <a name="api_free_doc"></a>
+  	  <h2 class="titlestyle">int xml_free_document(void* handle)</h2>
+  	  <p class="pistyle">
+  	    when you no longer need the XML-tree,using this function to free memory.<br>
+  	    this function always return 0.
+  	    <pre class="codestyle">
+  	      xml_free_document(handle); // this function always return 0.
+  	    </pre>
+  	  </p>
+    </div>
+    <div>
+      <a name="api_get_text"></a>
+      <h2 class="titlestyle">int xml_get_element_text(void* handle,const char* path,const char* buf,int cb,int mode)</h2>
+      <p class="pistyle">
+        you can use this function to get XML text on an element-node.<br>
+        this function could work in two mode ,depend on the parameter ,'mode' .<br>
+        if mode is ture ,it'll consider 'handle' is the handle returned by <a href="#api_op_branch">xml_node_branch_open(void* handle,const char* path)</a><br>
+        otherwise ,'handle' is returned by <a href="#api_init_doc">xml_init_document(const char*)</a><br>
+        if operation is successful,it'll return 1,otherwise return 0.
+        <pre class="codestyle">
+          // if mode is ture.
+          // 'handle' is returned by xml_node_branch_open(void* handle,const char* path).
+          // ...
+          char buf[260]={0};
+          void* node=0;
+          if(node=xml_node_branch_open(handle,"\\element\\items\\abcdefg")){
+            if(xml_get_element_text(node,0,buf,sizeof(buf),0x0001)){ // we use 0x0001 as ture value.
+              printf("%s\n",buf);
+            }
+          }
+          
+          // if mode is false.
+          // 'handle' is returned by xml_init_document(...).
+          // ...
+          char buf[260]={0};
+          void* handle=0;
+          if(handle=xml_init_document("test.xml"))){
+            if(xml_get_element_text(handle,"\\element\\section",buf,sizeof(buf),0x0000)){
+              printf("%s\n",buf);
+            }
+          }
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_set_text"></a>
+      <h2 class="titlestyle">int xml_set_element_text(void* handle,const char* path,const char* buf,int mode)</h2>
+      <p class="pistyle">
+        you could use this function to set the text on an elment-node.<br>
+        just like the function ,xml_get_element_text(...) ,it'll work in two mode too.<br>
+        if operation is successful,it'll return 1.otherwise return 0.
+        <pre class="codestyle">
+          // use 0x0000 as false value.
+          // function will consider handle is the value returned by xml_init_document(...).
+          if(xml_set_element_attributes(handle,"\\element\\items\\num","abc","chenxiang",0x0000)){
+            printf("done!\n");
+          }
+          
+          // use 0x0001 as ture value.
+          // function will consider handle is the value returned by xml_node_branch_open(...).
+          if(node=xml_node_branch_open(handle,"\\element\\items\\abcdefg")){
+            if(xml_set_element_text(node,0,"something",0x0001)){
+              printf("done!\n");
+            }
+          }
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_get_attr"></a>
+      <h2 class="titlestyle">int xml_get_element_attributes(void* handle,const char* path,const char* name,const char* buf,int cb,int mode)</h2>
+      <p class="pistyle">
+        you could use this function to get the value of an attribute.<br>
+        this function support two mode,like xml_get_element_text(...).<br>
+        if operation is successful,it'll return 1.otherwise return 0.
+        <pre class="codestyle">
+          if(xml_get_element_attributes(handle,"\\element\\items\\num","abc",buf,sizeof(buf),0x0000)){
+            printf("%s\n",buf);
+          }
+          // if mode is 1 ,'path' parameter is ignored.
+          // 'handle' must been returned by xml_node_branch_open(...)
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_set_attr"></a>
+      <h2 class="titlestyle">int xml_set_element_attributes(void* handle,const char* path,const char* name,const char* buf,int mode)</h2>
+      <p class="pistyle">
+        you could use this function to modify the value of an attribute.<br>
+        this function support two mode,like xml_get_element_text(...).<br>
+        if operation is successful,it'll return 1.otherwise return 0.
+        <pre class="codestyle">
+          if(xml_set_element_attributes(handle,"\\element\\items\\num","abc",buf,0x0000)){
+            printf("%s\n",buf);
+          }
+          // reference to xml_get_element_attributes(...)
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_up_doc"></a>
+      <h2 class="titlestyle">int xml_update_document(void* handle)</h2>
+      <p class="pistyle">
+        using this function to update XML-tree's data into disk.<br>
+        this operation will modify original XML document.<br>
+        if operation is successful,it'll return 1.otherwise return 0.
+        <pre class="codestyle">
+          xml_update_document(handle); // 'handle' is returned by xml_init_document(...)
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_wr_doc"></a>
+      <h2 class="titlestyle">int xml_write_document(void* handle,const char* filename)</h2>
+      <p class="pistyle">
+        xml_update_document(handle) will modify original file.if you need write XML-tree's data<br>
+        to other place,considerring use this function.<br>
+        if operation is successful,it'll return 1.otherwise return 0.
+        <pre class="codestyle">
+          xml_write_document(handle,"/home/cxx/test.xml"); // 'handle' is returned by xml_init_document(...)
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_node_open"></a>
+      <h2 class="titlestyle">void* xml_node_branch_open(void* handle,const char* path)</h2>
+      <p class="pistyle">
+        you can open a branch's node.and do more operations.<br>
+        if successful,it'll return current node.otherwise return 0.
+        <pre class="codestyle">
+          if(node=xml_node_branch_open(handle,"\\element\\items\\abcdefg")){ // specifield path.
+            // ...
+          }
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_node_next"></a>
+      <h2 class="titlestyle">void* xml_node_branch_go_next(void* treenode)</h2>
+      <p class="pistyle">
+        goto next node of the branch.<br>
+        if successful,it'll return current node.otherwise return 0.
+        <pre class="codestyle">
+          if(node=xml_node_branch_open(handle,"\\element\\items\\abcdefg")){
+            if(node=xml_node_branch_go_next(node)){ // 'node' is the next node.
+              // we located on next node here.
+              // ...
+            }
+          }
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_node_previous"></a>
+      <h2 class="titlestyle">void* xml_node_branch_go_previous(void* treenode)</h2>
+      <p class="pistyle">
+        goto previous node of the branch.<br>
+        if successful,it'll return current node.otherwise return 0.
+        <pre class="codestyle">
+          if(node=xml_node_branch_open(handle,"\\element\\items\\abcdefg")){
+            if(node=xml_node_branch_go_previous(node)){ // 'node' is the previous node.
+              // ...
+            }
+          }
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_node_child"></a>
+      <h2 class="titlestyle">void* xml_node_branch_go_child(void* treenode)</h2>
+      <p class="pistyle">
+        goto child's node of the branch.<br>
+        if successful,it'll return current node,otherwise return 0.
+        <pre class="codestyle">
+          if(node=xml_node_branch_open(handle,"\\element\\items\\abcdefg")){
+            if(node=xml_node_branch_go_child(node)){ // 'node' is the node of child ...
+              // ...
+            }
+          }
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_node_insert"></a>
+      <h2 class="titlestyle">void* xml_node_branch_insert(void* treenode,const char* tag,const char* attributes,int single,const char* text,const char* comment)</h2>
+      <p class="pistyle">
+        you can insert a new node into current branch.<br>
+        if successful,it'll return current node.otherwise return 0.
+        <pre class="codestyle">
+          if(node=xml_node_branch_open(handle,"\\element\\/test")){ 
+            // in this sample,'/test' is the endian tag.
+            node=xml_node_branch_insert(node,"insert-sub",0,0,0,0);
+          }
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_node_insertc"></a>
+      <h2 class="titlestyle">void* xml_node_branch_insert_child(void* treenode,const char* tag,const char* attributes,int single,const char* text,const char* comment)</h2>
+      <p class="pistyle">
+        you can insert a new child's node into current branch.<br>
+        if attributes contain several items.using space to divide it,like ( abc="abc" name="ddddd" id="11111111" ).<br>
+        if you set 'single' as ture(0x0001),it'll consider this is a single line tag.<br>
+        if successful,it'll return current node,otherwise return 0.
+        <pre class="codestyle">
+          if(node=xml_node_branch_open(handle,"\\element\\/test")){
+            node=xml_node_branch_insert(node,"insert-sub",0,0,0,0);
+            node=xml_node_branch_insert_child(node,"child1","name=\"23\"",1,0,0);
+            node=xml_node_branch_insert(node,"child2","name=\"34\" id=\"23333\"",1,0,0);
+            node=xml_node_branch_insert(node,"child3","name=\"45\"",1,0,0);
+            node=xml_node_branch_insert(node,"/insert-sub",0,0,0,0);
+          }
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_node_remove"></a>
+      <h2 class="titlestyle">int xml_node_branch_remove(void* treenode)</h2>
+      <p class="pistyle">
+        you can remove a node from XML-tree.<br>
+        if successful,it'll return 1,otherwise return 0.
+        <pre class="codestyle">
+          int xml_node_branch_remove(node);
+        </pre>
+      </p>
+    </div>
+  </article>
+</section>
+<hr>
+<p align="right" class="lnkstyle">中文</a>
+<a name="lang_chinese"></a>
+<nav role="navigation" >
+  <ul>
+    <li><p align="left"><font size="3">API参考</font></p></li>
+    <li><a href="#api_init_doc_cn">void* xml_init_document(const char* filename)</a></li>
+    <li><a href="#api_free_doc_cn">int xml_free_document(void* handle)</a></li>
+    <li><a href="#api_get_text_cn">int xml_get_element_text(void* handle,const char* path,const char* buf,int cb,int mode)</a></li>
+    <li><a href="#api_set_text_cn">int xml_set_element_text(void* handle,const char* path,const char* buf,int mode)</a></li>
+    <li><a href="#api_get_attr_cn">int xml_get_element_attributes(void* handle,const char* path,const char* name,const char* buf,int cb,int mode)</a></li>
+    <li><a href="#api_set_attr_cn">int xml_set_element_attributes(void* handle,const char* path,const char* name,const char* buf,int mode)</a></li>
+    <li><a href="#api_up_doc_cn">int xml_update_document(void* handle)</a></li>
+    <li><a href="#api_wr_doc_cn">int xml_write_document(void* handle,const char* filename)</a></li>
+    <li><a href="#api_node_open_cn">void* xml_node_branch_open(void* handle,const char* path)</a></li>
+    <li><a href="#api_node_next_cn">void* xml_node_branch_go_next(void* treenode)</a></li>
+    <li><a href="#api_node_previous_cn">void* xml_node_branch_go_previous(void* treenode)</a></li>
+    <li><a href="#api_node_child_cn">void* xml_node_branch_go_child(void* treenode)</a></li>
+    <li><a href="#api_node_insert_cn">void* xml_node_branch_insert(void* treenode,const char* tag,const char* attributes,int single,const char* text,const char* comment)</a></li>
+    <li><a href="#api_node_insertc_cn">void* xml_node_branch_insert_child(void* treenode,const char* tag,const char* attributes,int single,const char* text,const char* comment)</a></li>
+    <li><a href="#api_node_remove_cn">int xml_node_branch_remove(void* treenode)</a></li>
+  </ul>
+</nav>
+<hr>
+<section>
+  <article>
+    <div>
+      <a name="api_init_doc_cn"></a>
+      <h2 class="titlestyle">void* xml_init_document(const char* filename)</h2>
+      <p class="pistyle">
+        在使用本库函数前，必须先调用此函数一完成一些初始化的工作。<br>
+        比如创建XML树，和栈结构。<br>
+        成功返回XML的指针，否则返回0。
+        <pre class="codestyle">
+          void* handle=xml_init_document();
+          if(handle){
+            // ...
+          }
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_free_doc_cn"></a>
+      <h2 class="titlestyle">int xml_free_document(void* handle)</h2>
+      <p class="pistyle">
+        当你不再需要在XML树中存储数据时，使用这个函数来释放内存。<br>
+        这个函数总返回0。
+        <pre class="codestyle">
+          xml_free_document(handle); // 这个函数永运返回0.
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_get_text_cn"></a>
+      <h2 class="titlestyle">int xml_get_element_text(void* handle,const char* path,const char* buf,int cb,int mode)</h2>
+      <p class="pistyle">
+        你可以用这个函数来获取XML文档中的元素的文本信息。<br>
+        此函数可以有两种工作模式，具体取决与函数的mode参数。<br>
+        如果mode为真值（如：1），函数会认为handle是<a href="#api_node_open_cn">xml_node_branch_open(...)</a>返回的值，<br>
+        函数操作成功返回1，否则返回0。
+        <pre class="codestyle">
+          // 如果mode为真值
+          // 'handle' 是xml_node_branch_open(void* handle,const char* path)返回的值
+          // ...
+          char buf[260]={0};
+          void* node=0;
+          if(node=xml_node_branch_open(handle,"\\element\\items\\abcdefg")){
+            if(xml_get_element_text(node,0,buf,sizeof(buf),0x0001)){ // we use 0x0001 as ture value.
+              printf("%s\n",buf);
+            }
+          }
+          
+          // 如果mode为假值
+          // 'handle' 是xml_init_document(...)返回的值
+          // ...
+          char buf[260]={0};
+          void* handle=0;
+          if(handle=xml_init_document("test.xml"))){
+            if(xml_get_element_text(handle,"\\element\\section",buf,sizeof(buf),0x0000)){
+              printf("%s\n",buf);
+            }
+          }
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_set_text_cn"></a>
+      <h2 class="titlestyle">int xml_set_element_text(void* handle,const char* path,const char* buf,int mode)</h2>
+      <p class="pistyle">
+        你可以用这个函数来修改XML文档中节点的文本。<br>
+        用法同xml_get_element_text(...)<br>
+        操作成功返回1，否则返回0。
+        <pre class="codestyle">
+          // use 0x0000 as false value.
+          // 函数将认为是 xml_init_document(...)返回的值
+          if(xml_set_element_attributes(handle,"\\element\\items\\num","abc","chenxiang",0x0000)){
+            printf("done!\n");
+          }
+          
+          // use 0x0001 as ture value.
+          // 函数将认为是 xml_node_branch_open(...)返回的值
+          if(node=xml_node_branch_open(handle,"\\element\\items\\abcdefg")){
+            if(xml_set_element_text(node,0,"something",0x0001)){
+              printf("done!\n");
+            }
+          }
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_get_attr_cn"></a>
+      <h2 class="titlestyle">int xml_get_element_attributes(void* handle,const char* path,const char* name,const char* buf,int cb,int mode)</h2>
+      <p class="pistyle">
+        你可以用这个函数得到节点中某个属性的值。<br>
+        用法同 xml_get_element_text(...)，<br>
+        操作成功返回1，否则0。
+        <pre class="codestyle">
+          if(xml_get_element_attributes(handle,"\\element\\items\\num","abc",buf,sizeof(buf),0x0000)){
+            printf("%s\n",buf);
+          }
+          // 如果mode为真 ,'path'参数将被忽略，用来打开由xml_node_branch_open(...)返回的指针
+          // 'handle' 必须是由xml_node_branch_open(...)返回的值
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_set_attr_cn"></a>
+      <h2 class="titlestyle">int xml_set_element_attributes(void* handle,const char* path,const char* name,const char* buf,int mode)</h2>
+      <p class="pistyle">
+        你可以用这个函数修改节点中某个属性的值。<br>
+        用法同 xml_get_element_text(...)，<br>
+        操作成功返回1，否则0。
+        <pre class="codestyle">
+          if(xml_set_element_attributes(handle,"\\element\\items\\num","abc",buf,0x0000)){
+            printf("%s\n",buf);
+          }
+          // 参考 xml_get_element_attributes(...)
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_up_doc_cn"></a>
+      <h2 class="titlestyle">int xml_update_document(void* handle)</h2>
+      <p class="pistyle">
+        用这个函数把整个XML树写到磁盘上。<br>
+        此操作会修改原来的XML文档。<br>
+        操作成功返回1，否则0.
+        <pre class="codestyle">
+          xml_update_document(handle); // 'handle' 由xml_init_document(...)返回
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_wr_doc_cn"></a>
+      <h2 class="titlestyle">int xml_write_document(void* handle,const char* filename)</h2>
+      <p class="pistyle">
+        xml_update_document(...)会修改原来的XML文档，<br>
+        如果需要将XML树写到其他的文件中，可以使用这个函数。<br>
+        操作成功返回1，否则0。
+        <pre class="codestyle">
+          xml_write_document(handle,"/home/cxx/test.xml"); // 'handle' 由xml_init_document(...)返回
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_node_open_cn"></a>
+      <h2 class="titlestyle">void* xml_node_branch_open(void* handle,const char* path)</h2>
+      <p class="pistyle">
+        你可以打开一个XML树上的节点（枝）来做更多地操作。<br>
+        成功返回节点的指针，否则返回0。
+        <pre class="codestyle">
+          if(node=xml_node_branch_open(handle,"\\element\\items\\abcdefg")){ // 指定path路径
+            // ...
+          }
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_node_next_cn"></a>
+      <h2 class="titlestyle">void* xml_node_branch_go_next(void* treenode)</h2>
+      <p class="pistyle">
+        移到下一个节点的枝上。<br>
+        成功返回节点的指针，否则返回0。
+        <pre class="codestyle">
+          if(node=xml_node_branch_open(handle,"\\element\\items\\abcdefg")){
+            if(node=xml_node_branch_go_next(node)){ // 'node'是下一个节点
+              // ...
+            }
+          }
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_node_previous_cn"></a>
+      <h2 class="titlestyle">void* xml_node_branch_go_previous(void* treenode)</h2>
+      <p class="pistyle">
+        移到上一个节点的枝上。<br>
+        成功返回节点的指针，否则返回0。
+        <pre class="codestyle">
+          if(node=xml_node_branch_open(handle,"\\element\\items\\abcdefg")){
+            if(node=xml_node_branch_go_previous(node)){ // 'node'是上一个节点
+              // ...
+            }
+          }
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_node_child_cn"></a>
+      <h2 class="titlestyle">void* xml_node_branch_go_child(void* treenode)</h2>
+      <p class="pistyle">
+	移到子节点的枝上。<br>
+	成功返回节点的指针，否则返回0。
+	<pre class="codestyle">
+	  if(node=xml_node_branch_open(handle,"\\element\\items\\abcdefg")){
+            if(node=xml_node_branch_go_child(node)){
+              // ...
+            }
+          }
+	</pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_node_insert_cn"></a>
+      <h2 class="titlestyle">void* xml_node_branch_insert(void* treenode,const char* tag,const char* attributes,int single,const char* text,const char* comment)</h2>
+      <p class="pistyle">
+        你可以插入一个新的节点到XML树中。<br>
+        如果你将‘single’设置为真值，将作为单行标记。<br>
+        成功返回节点的指针，否则返回0。
+        <pre class="codestyle">
+          if(node=xml_node_branch_open(handle,"\\element\\/test")){ 
+            // 在代码中 ,'/test' 是结尾标记
+            node=xml_node_branch_insert(node,"insert-sub",0,0,0,0);
+          }
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_node_insertc_cn"></a>
+      <h2 class="titlestyle">void* xml_node_branch_insert_child(void* treenode,const char* tag,const char* attributes,int single,const char* text,const char* comment)</h2>
+      <p class="pistyle">
+        你可以插入一个子节点到XML树中。<br>
+        属性中的字符串包含多个像，用空格键分开，就像这样（ abc="abc" name="ddddd" id="11111111"）。<br>
+        成功返回节点的指针，否则返回0。
+        <pre class="codestyle">
+          if(node=xml_node_branch_open(handle,"\\element\\/test")){
+            node=xml_node_branch_insert(node,"insert-sub",0,0,0,0);
+            node=xml_node_branch_insert_child(node,"child1","name=\"23\"",1,0,0);
+            node=xml_node_branch_insert(node,"child2","name=\"34\" id=\"23333\"",1,0,0);
+            node=xml_node_branch_insert(node,"child3","name=\"45\"",1,0,0);
+            node=xml_node_branch_insert(node,"/insert-sub",0,0,0,0);
+          }
+        </pre>
+      </p>
+    </div>
+    <div>
+      <a name="api_node_remove_cn"></a>
+      <h2 class="titlestyle">int xml_node_branch_remove(void* treenode)</h2>
+      <p class="pistyle">
+        用这个函数可以从XML树中删除一个节点。<br>
+        成功返回1，否则返回0。
+        <pre class="codestyle">
+          int xml_node_branch_remove(node);
+        </pre>
+      </p>
+    </div>
+  </article>
+</section>
+<footer role="contentinfo" > 
+<br><font size="2"><i>copyright&copy;2014 Sean Chen</i></font>
+</footer>
+</body>
+</html>
