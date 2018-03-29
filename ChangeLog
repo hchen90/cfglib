@@ -1,9 +1,9 @@
-2014-08-28  Sean Chen  <a.chenxiang.z@gmail.com>
+2014-08-28  Hsiang Chen  <a.chenxiang.z@gmail.com>
 
 	Using autotools to manage libraries files.
 	* section/section.c (section_version): Add an api for returning version information.
 	* xml/xml.c (xml_version): Likewise.
 
-2014-03-30  Sean Chen  <a.chenxiang.z@gmail.com>
+2014-03-30  Hsiang Chen  <a.chenxiang.z@gmail.com>
 
 	* : New Files.

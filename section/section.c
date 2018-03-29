@@ -9,7 +9,7 @@
  * for more detail.
  *
  * Library's Name: CfgLib (section)
- * Copyright(C)2014 Sean Chen
+ * Copyright(C)2014 Hsiang Chen
  *
  **********************************************/
 
@@ -337,7 +337,7 @@ const char* section_version()
 /****************************************************************
 *
 * Name: CfgLib (section)
-* Author: Sean Chen
+* Author: Hsiang Chen
 * Bug Report: a.chenxiang.z@gmail.com
 *
 ****************************************************************/

@@ -9,7 +9,7 @@
  * for more detail.
  *
  * Library's Name: CfgLib (xml)
- * Copyright(C)2014 Sean Chen
+ * Copyright(C)2014 Hsiang Chen
  *
  **********************************************/
 
@@ -942,7 +942,7 @@ int _track_xml_output(char* filename)
 /****************************************************************
 *
 * Name: CfgLib (xml)
-* Author: Sean Chen
+* Author: Hsiang Chen
 * Bug Report: a.chenxiang.z@gmail.com
 *
 ****************************************************************/

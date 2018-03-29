@@ -1,6 +1,6 @@
 /*****************************************
  * code.h
- * Copyright(C)2014 Sean Chen
+ * Copyright(C)2014 Hsiang Chen
  *
  */
 
